@@ -22,12 +22,12 @@ class TriviaViewController: UIViewController {
   private var currQuestionIndex = 0
   private var numCorrectQuestions = 0
   
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    addGradient()
-    questionContainerView.layer.cornerRadius = 8.0
-    // TODO: FETCH TRIVIA QUESTIONS HERE
-  }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addGradient()
+        questionContainerView.layer.cornerRadius = 8.0
+        fetchTriviaQuestions()
+    }
   
   private func updateQuestion(withQuestionIndex questionIndex: Int) {
     currentQuestionNumberLabel.text = "Question: \(questionIndex + 1)/\(questions.count)"
@@ -106,5 +106,15 @@ class TriviaViewController: UIViewController {
   @IBAction func didTapAnswerButton3(_ sender: UIButton) {
     updateToNextQuestion(answer: sender.titleLabel?.text ?? "")
   }
+    
+    private func fetchTriviaQuestions() {
+        TriviaQuestionService().fetchTriviaQuestions { [weak self] fetchedQuestions in
+            guard let self = self, let fetchedQuestions = fetchedQuestions else { return }
+            self.questions = fetchedQuestions
+            self.currQuestionIndex = 0
+            self.numCorrectQuestions = 0
+            self.updateQuestion(withQuestionIndex: self.currQuestionIndex)
+        }
+    }
 }
 
